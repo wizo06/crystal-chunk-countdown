@@ -13,10 +13,11 @@ const buildEmbedFromDB = () => {
 
   let descriptionContent = '';
   for (const userInDB of arrOfUsers) {
-    const future = moment.unix(userInDB.timestamp);
+    const respawnTimestamp = moment.unix(userInDB.timestamp);
     const now = moment();
-    const duration = moment.duration(future.diff(now));
-    descriptionContent += `<@${userInDB.id}> - ${duration.days()}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s\n`
+    const duration = moment.duration(respawnTimestamp.diff(now));
+    if (duration.asSeconds() < 0) descriptionContent += `<@${userInDB.id}> - respawned\n`;
+    else descriptionContent += `<@${userInDB.id}> - ${duration.days()}d ${duration.hours()}h ${duration.minutes()}m ${duration.seconds()}s\n`;
   }
 
   const embed = {
