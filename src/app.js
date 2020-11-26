@@ -67,7 +67,7 @@ BOT.on('messageReactionAdd', async (messageReaction, user) => {
   if (messageReaction.emoji.name === '▶️') {
     updateDatabase(user, false);
   }
-  else if (messageReaction.emoji.name === '✔️') {
+  else if (messageReaction.emoji.name === '✅') {
     updateDatabase(user, true);
   }
   // else if (messageReaction.emoji.name === '❌') {
@@ -87,7 +87,7 @@ BOT.on('ready', async () => {
   const sentMessage = await BOT.guilds.cache.get(CONFIG.guildID).channels.cache.get(CONFIG.channelID).send('', { embed });
 
   await sentMessage.react('▶️');
-  await sentMessage.react('✔️');
+  await sentMessage.react('✅');
   // await sentMessage.react('❌');
 
   BOT.setInterval(() => {
