@@ -94,7 +94,7 @@ BOT.on('ready', async () => {
     const embed = buildEmbedFromDB();
 
     sentMessage.edit('', { embed });
-  }, 5000);
+  }, 30000);
 });
 
 BOT.login(CONFIG.discordBOTToken).catch(e => logger.error(e));
