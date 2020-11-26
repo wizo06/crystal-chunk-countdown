@@ -21,14 +21,15 @@ const buildEmbedFromDB = () => {
   }
 
   const embed = {
-    title: 'React to reset your timer',
-    description: descriptionContent
+    title: '▶️: start countdown | ✔️: set as respawned',
+    description: descriptionContent,
+    color: 65535
   };
 
   return embed;
 };
 
-const updateDatabase = (user) => {
+const updateDatabase = (user, setToZero) => {
   const buffer = fs.readFileSync('db/db.json');
   const arrOfUsers = JSON.parse(buffer);
 
@@ -36,17 +37,23 @@ const updateDatabase = (user) => {
   const nowPlus3Days = moment().add(3, 'days').format('X');
   for (const userInDB of arrOfUsers) {
     if (userInDB.id === user.id) {
-      userInDB.timestamp = nowPlus3Days;
+      if (setToZero) userInDB.timestamp = "0";
+      else userInDB.timestamp = nowPlus3Days;
       userFoundInDB = true;
     }
   }
 
   if (userFoundInDB === false) {
-    arrOfUsers.push({ id: user.id, timestamp: nowPlus3Days });
+    if (setToZero) arrOfUsers.push({ id: user.id, timestamp: "0" });
+    else arrOfUsers.push({ id: user.id, timestamp: nowPlus3Days });
   }
 
   fs.writeFileSync('db/db.json', JSON.stringify(arrOfUsers));
 };
+
+// const removeUserFromMessage = () => {
+// 
+// };
 
 BOT.on('error', err => {
   logger.error(err.message);
@@ -57,7 +64,15 @@ BOT.on('messageReactionAdd', async (messageReaction, user) => {
   
   await messageReaction.users.remove(user);
 
-  updateDatabase(user);
+  if (messageReaction.emoji.name === '▶️') {
+    updateDatabase(user, false);
+  }
+  else if (messageReaction.emoji.name === '✔️') {
+    updateDatabase(user, true);
+  }
+  // else if (messageReaction.emoji.name === '❌') {
+  //   removeUserFromMessage();
+  // }
 
   const embed = buildEmbedFromDB();
 
@@ -71,7 +86,9 @@ BOT.on('ready', async () => {
 
   const sentMessage = await BOT.guilds.cache.get(CONFIG.guildID).channels.cache.get(CONFIG.channelID).send('', { embed });
 
-  sentMessage.react('🔄');
+  await sentMessage.react('▶️');
+  await sentMessage.react('✔️');
+  // await sentMessage.react('❌');
 
   BOT.setInterval(() => {
     const embed = buildEmbedFromDB();
