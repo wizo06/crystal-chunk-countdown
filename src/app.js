@@ -21,7 +21,7 @@ const buildEmbedFromDB = () => {
   }
 
   const embed = {
-    title: '▶️: start countdown | ✔️: set as respawned',
+    title: '▶️: start countdown | ✅: set as respawned',
     description: descriptionContent,
     color: 65535
   };
